@@ -18,6 +18,10 @@ const TrackSchema = new mongoose.Schema({
             message: "Album does not exist!"
         }
     },
+    number: {
+        type: Number,
+        required: true
+    },
     duration: {
         type: String,
         required: true
