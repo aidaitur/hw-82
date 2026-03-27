@@ -20,7 +20,7 @@ albumsRouter.get("/", async (req, res) => {
             filter.artist = artistId;
         }
 
-        const albums = await Album.find(filter).populate("artist", "name");
+        const albums = await Album.find(filter).populate("artist", "name") .populate("tracks", "number title duration");
         return res.send(albums);
 
     } catch (e) {
