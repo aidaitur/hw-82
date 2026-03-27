@@ -13,6 +13,7 @@ app.use(cors({
 const port = 8000;
 
 app.use(express.json());
+app.use(express.static("public"));
 
 app.use("/artists", artistsRouter);
 app.use("/albums", albumsRouter);
