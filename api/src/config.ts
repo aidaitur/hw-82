@@ -1,5 +1,15 @@
+import path from 'path';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const rootPath = __dirname;
+
 const config = {
-    db: "mongodb://127.0.0.1:27017/music", // имя базы можно любое
+    rootPath,
+    publicPath: path.join(rootPath, 'public'),
+    db: process.env.DB_URI || 'mongodb://localhost/shop-js-30',
+    jwtSecret: process.env.JWT_SECRET || 'secret',
 };
 
 export default config;
