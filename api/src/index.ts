@@ -2,8 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import artistsRouter from "./routers/artists";
 import albumsRouter from "./routers/albums";
-import tracksRouter from "./routers/tracks";
+import trackHistoryRouter from "./routers/trackHistory";
 import cors from "cors";
+import usersRouter from "./routers/users";
 
 const app = express();
 app.use(cors());
@@ -17,7 +18,8 @@ app.use(express.static("public"));
 
 app.use("/artists", artistsRouter);
 app.use("/albums", albumsRouter);
-app.use("/tracks", tracksRouter);
+app.use("/track-history", trackHistoryRouter);
+app.use("/users", usersRouter);
 
 
 const run = async () => {
