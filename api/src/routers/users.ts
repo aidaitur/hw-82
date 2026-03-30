@@ -1,69 +1,56 @@
-import express, { Request, Response, NextFunction } from "express";
-import mongoose from "mongoose";
+import express from "express";
 import User from "../models/User";
+import auth from "../middleware/auth";
 
 const usersRouter = express.Router();
 
-usersRouter.post("/", async (req: Request, res: Response, next: NextFunction) => {
+usersRouter.post("/", async (req, res, next) => {
     try {
-        const user = new User({
-            username: req.body.username,
-            password: req.body.password
-        });
+        const { username, password } = req.body;
 
-        user.generateToken();
+        const user = new User({ username, password });
+        user.generateAuthToken();
 
         await user.save();
-        return res.send(user);
+        res.send({ message: "User registered successfully", user });
+    } catch (e: any) {
+        if (e.name === "ValidationError") {
+            return res.status(400).send(e);
+        }
+        next(e);
+    }
+});
 
-    } catch (error) {
-        if (error instanceof mongoose.Error.ValidationError) {
-            return res.status(400).send(error);
+usersRouter.post("/sessions", async (req, res, next) => {
+    try {
+        const { username, password } = req.body;
+        const user = await User.findOne({ username });
+
+        if (!user) {
+            return res.status(400).send({ error: "Username not found" });
         }
 
-        return next(error);
+        const isMatch = await user.checkPassword(password);
+        if (!isMatch) {
+            return res.status(400).send({ error: "Invalid password" });
+        }
+
+        user.generateAuthToken();
+        await user.save();
+
+        res.send({ message: "Logged in successfully", user });
+    } catch (e) {
+        next(e);
     }
 });
 
-usersRouter.post("/sessions", async (req: Request, res: Response) => {
-    const user = await User.findOne({ username: req.body.username });
-
-    if (!user) {
-        return res.status(400).send({ error: "Username not found" });
+usersRouter.get("/", auth, async (req, res, next) => {
+    try {
+        const users = await User.find();
+        res.send(users);
+    } catch (e) {
+        next(e);
     }
-
-    const isMatch = await user.checkPassword(req.body.password);
-
-    if (!isMatch) {
-        return res.status(400).send({ error: "Invalid password" });
-    }
-
-    user.generateToken();
-    await user.save();
-
-    return res.send({
-        message: "Logged in successfully",
-        user
-    });
-});
-
-usersRouter.post("/secret", async (req: Request, res: Response) => {
-    const token = req.get("Authorization");
-
-    if (!token) {
-        return res.status(401).send({ error: "No token present" });
-    }
-
-    const user = await User.findOne({ token });
-
-    if (!user) {
-        return res.status(401).send({ error: "Wrong token!" });
-    }
-
-    return res.send({
-        message: "Secret message",
-        username: user.username
-    });
 });
 
 export default usersRouter;
