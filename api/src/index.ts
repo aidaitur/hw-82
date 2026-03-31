@@ -5,6 +5,7 @@ import albumsRouter from "./routers/albums";
 import trackHistoryRouter from "./routers/trackHistory";
 import cors from "cors";
 import usersRouter from "./routers/users";
+import tracksRouter from "./routers/tracks";
 
 const app = express();
 app.use(cors());
@@ -16,10 +17,11 @@ const port = 8000;
 app.use(express.json());
 app.use(express.static("public"));
 
-app.use("/artists", artistsRouter);
-app.use("/albums", albumsRouter);
+
+
 app.use("/track-history", trackHistoryRouter);
 app.use("/users", usersRouter);
+app.use("/tracks", tracksRouter);
 
 
 const run = async () => {

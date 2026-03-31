@@ -1,21 +1,47 @@
-export interface Artist {
+export interface User {
     _id: string;
-    name: string;
-    photo: string;
+    username: string;
+    token: string;
 }
 
-export interface Album {
+export interface ValidationError {
+    errors: {
+        [key: string]: {
+            name: string;
+            message: string;
+        }
+    },
+    message: string;
+    name: string;
+    _message: string;
+}
+
+export interface GlobalError {
+    error: string;
+}
+
+export interface RegisterMutation {
+    username: string;
+    password: string;
+}
+export interface LoginMutation {
+    email: string;
+    password: string;
+}
+
+
+export interface TrackHistoryItem {
     _id: string;
     title: string;
-    cover: string;
-    year: number;
-    artist?: { name: string };
-    tracksCount?: number;
+    artistName?: string;
+    playedAt: string;
 }
 
 export interface Track {
     _id: string;
     title: string;
-    duration: string;
-    trackNumber: number;
+    artist: {
+        _id: string;
+        name: string;
+    };
 }
