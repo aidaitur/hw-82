@@ -19,6 +19,26 @@ export interface TrackMutation {
 }
 export interface UserFields {
     username: string;
-    password: string;
+    password?: string;
+    displayName: string;
+    avatar?: string | null;
+    googleID?: string | null;
     token: string;
 }
+
+export interface IUser {
+    _id: string;
+    username: string;
+    password?: string;
+    token: string;
+    role: 'user' | 'admin';
+    displayName: string;
+    googleID?: string;
+    avatar?: string | null;
+}
+
+export interface UserMethods {
+    generateToken(): void;
+}
+
+export type UserModel = Model<IUser, {}, UserMethods>;
