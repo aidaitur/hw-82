@@ -10,6 +10,9 @@ const config = {
     publicPath: path.join(rootPath, 'public'),
     db: process.env.DB_URI || 'mongodb://localhost/shop-js-30',
     jwtSecret: process.env.JWT_SECRET || 'secret',
+    google: {
+        clientId: process.env.GOOGLE_CLIENT_ID || '',
+    }
 };
 
 export default config;
