@@ -1,14 +1,23 @@
-import {createAsyncThunk} from "@reduxjs/toolkit";
-import {axiosApi} from "../../axiosApi.ts";
-import type {GlobalError, LoginMutation, RegisterMutation, User, ValidationError} from "../../types";
-import {isAxiosError} from "axios";
-import {toast} from "react-toastify";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { axiosApi } from "../../axiosApi.ts";
+import type { GlobalError, LoginMutation, RegisterMutation, User, ValidationError } from "../../types";
+import { isAxiosError } from "axios";
+import { toast } from "react-toastify";
 
-export const register = createAsyncThunk<User, RegisterMutation, {rejectValue: ValidationError}>(
+export const register = createAsyncThunk<User, RegisterMutation, { rejectValue: ValidationError }>(
     'users/register',
-    async (registerMutation, {rejectWithValue}) => {
+    async (registerMutation, { rejectWithValue }) => {
         try {
-            const response = await axiosApi.post<{user: User, message: string}>('/users', registerMutation);
+            const formData = new FormData();
+            formData.append('username', registerMutation.username);
+            formData.append('password', registerMutation.password);
+            formData.append('displayName', registerMutation.displayName);
+
+            if (registerMutation.avatar) {
+                formData.append('avatar', registerMutation.avatar);
+            }
+
+            const response = await axiosApi.post<{ user: User; message: string }>('/users', formData);
             toast.success(response.data.message);
             return response.data.user;
         } catch (e) {
@@ -17,14 +26,30 @@ export const register = createAsyncThunk<User, RegisterMutation, {rejectValue: V
             }
             throw e;
         }
+    },
+);
+
+export const login = createAsyncThunk<User, LoginMutation, { rejectValue: GlobalError }>(
+    'users/login',
+    async (loginMutation, { rejectWithValue }) => {
+        try {
+            const response = await axiosApi.post<{ user: User; message: string }>('/users/sessions', loginMutation);
+            toast.success(response.data.message);
+            return response.data.user;
+        } catch (e) {
+            if (isAxiosError(e) && e.response && e.response.status === 400) {
+                return rejectWithValue(e.response.data as GlobalError);
+            }
+            throw e;
+        }
     }
 );
 
-export const login = createAsyncThunk<User, LoginMutation, {rejectValue: GlobalError}>(
-    'users/login',
-    async (loginMutation, {rejectWithValue}) => {
+export const googleLogin = createAsyncThunk<User, string, { rejectValue: GlobalError }>(
+    'users/googleLogin',
+    async (credential, { rejectWithValue }) => {
         try {
-            const response = await axiosApi.post<{user: User, message: string}>('/users/sessions', loginMutation);
+            const response = await axiosApi.post<{ user: User; message: string }>('/users/google', { credential });
             toast.success(response.data.message);
             return response.data.user;
         } catch (e) {
