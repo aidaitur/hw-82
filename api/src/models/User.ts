@@ -27,7 +27,6 @@ const UserSchema = new mongoose.Schema<UserFields, UserModel, UserMethods>({
     },
     displayName: {
         type: String,
-        required: true,
     },
     avatar: String,
     googleID: String,

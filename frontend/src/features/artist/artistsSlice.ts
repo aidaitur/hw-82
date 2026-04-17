@@ -1,38 +1,38 @@
 import { createSlice } from '@reduxjs/toolkit';
-import type { Track } from '../../types';
-import { fetchTracks } from './tracksThunks';
+import type { Artist } from '../../types';
+import { fetchArtists } from './artistsThunks';
 
-interface TracksState {
-    items: Track[];
+interface ArtistsState {
+    items: Artist[];
     loading: boolean;
     error: boolean;
 }
 
-const initialState: TracksState = {
+const initialState: ArtistsState = {
     items: [],
     loading: false,
     error: false,
 };
 
-export const tracksSlice = createSlice({
-    name: 'tracks',
+export const artistsSlice = createSlice({
+    name: 'artists',
     initialState,
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(fetchTracks.pending, (state) => {
+            .addCase(fetchArtists.pending, (state) => {
                 state.loading = true;
                 state.error = false;
             })
-            .addCase(fetchTracks.fulfilled, (state, { payload }) => {
+            .addCase(fetchArtists.fulfilled, (state, { payload }) => {
                 state.loading = false;
                 state.items = payload;
             })
-            .addCase(fetchTracks.rejected, (state) => {
+            .addCase(fetchArtists.rejected, (state) => {
                 state.loading = false;
                 state.error = true;
             });
     },
 });
 
-export const tracksReducer = tracksSlice.reducer;
+export const artistsReducer = artistsSlice.reducer;
